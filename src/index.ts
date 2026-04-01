@@ -55,6 +55,111 @@ const mppx = Mppx.create({
 // ── Hono app ─────────────────────────────────────────────────────────────────
 const app = new Hono()
 
+// ── Discovery endpoint (required for MPPScan registration) ───────────────────
+app.get("/openapi.json", (c) =>
+  c.json({
+    openapi: "3.1.0",
+    info: {
+      title: "TikTok MPP API",
+      version: "1.0.0",
+      description: "Pay-per-request TikTok scraping API powered by the Machine Payments Protocol. Scrape user profiles, hashtags, videos and search results with automatic micropayments.",
+      "x-guidance": "This API requires MPP payments for each request. Call any endpoint and handle the 402 Payment Required response using an MPP-compatible client. Prices are in USD paid via Tempo/PathUSD. The /health endpoint is free and returns all available endpoints.",
+    },
+    "x-discovery": {
+      ownershipProofs: [],
+    },
+    paths: {
+      "/api/tiktok/user": {
+        get: {
+          operationId: "scrapeTikTokUser",
+          summary: "Scrape TikTok user profile and videos",
+          description: "Returns a user's profile info and recent videos. Pass the handle with or without @.",
+          parameters: [
+            { name: "handle", in: "query", required: true, schema: { type: "string" }, description: "TikTok username e.g. @charlidamelio" },
+            { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of videos to return" },
+          ],
+          "x-payment-info": {
+            protocols: [{ mpp: {} }],
+            price: { mode: "fixed", amount: "0.050000", currency: "USD" },
+          },
+          responses: {
+            "200": {
+              description: "User profile and videos",
+              content: { "application/json": { schema: { type: "object", properties: { handle: { type: "string" }, count: { type: "integer" }, results: { type: "array", items: { type: "object" } } } } } },
+            },
+            "402": { description: "Payment required — use an MPP client to pay $0.05 and retry" },
+          },
+        },
+      },
+      "/api/tiktok/hashtag": {
+        get: {
+          operationId: "scrapeTikTokHashtag",
+          summary: "Scrape TikTok hashtag posts",
+          description: "Returns recent posts under a hashtag. Pass the tag with or without #.",
+          parameters: [
+            { name: "tag", in: "query", required: true, schema: { type: "string" }, description: "Hashtag e.g. fyp or #fyp" },
+            { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of posts to return" },
+          ],
+          "x-payment-info": {
+            protocols: [{ mpp: {} }],
+            price: { mode: "fixed", amount: "0.100000", currency: "USD" },
+          },
+          responses: {
+            "200": {
+              description: "Hashtag posts",
+              content: { "application/json": { schema: { type: "object", properties: { tag: { type: "string" }, count: { type: "integer" }, results: { type: "array", items: { type: "object" } } } } } },
+            },
+            "402": { description: "Payment required — use an MPP client to pay $0.10 and retry" },
+          },
+        },
+      },
+      "/api/tiktok/video": {
+        get: {
+          operationId: "scrapeTikTokVideo",
+          summary: "Scrape single TikTok video metadata",
+          description: "Returns full metadata for a single TikTok video by URL.",
+          parameters: [
+            { name: "url", in: "query", required: true, schema: { type: "string", format: "uri" }, description: "Full TikTok video URL" },
+          ],
+          "x-payment-info": {
+            protocols: [{ mpp: {} }],
+            price: { mode: "fixed", amount: "0.020000", currency: "USD" },
+          },
+          responses: {
+            "200": {
+              description: "Video metadata",
+              content: { "application/json": { schema: { type: "object", properties: { url: { type: "string" }, results: { type: "array", items: { type: "object" } } } } } },
+            },
+            "402": { description: "Payment required — use an MPP client to pay $0.02 and retry" },
+          },
+        },
+      },
+      "/api/tiktok/search": {
+        get: {
+          operationId: "searchTikTok",
+          summary: "Search TikTok by keyword",
+          description: "Returns TikTok videos matching a keyword search query.",
+          parameters: [
+            { name: "q", in: "query", required: true, schema: { type: "string" }, description: "Search query e.g. funny cats" },
+            { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of results to return" },
+          ],
+          "x-payment-info": {
+            protocols: [{ mpp: {} }],
+            price: { mode: "fixed", amount: "0.050000", currency: "USD" },
+          },
+          responses: {
+            "200": {
+              description: "Search results",
+              content: { "application/json": { schema: { type: "object", properties: { query: { type: "string" }, count: { type: "integer" }, results: { type: "array", items: { type: "object" } } } } } },
+            },
+            "402": { description: "Payment required — use an MPP client to pay $0.05 and retry" },
+          },
+        },
+      },
+    },
+  })
+)
+
 // Root — redirect to health
 app.get("/", (c) => c.redirect("/health"))
 
