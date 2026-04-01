@@ -6,9 +6,15 @@ import { scrapeUser, scrapeHashtag, scrapeVideo, scrapeSearch } from "./apify.js
 // ── PathUSD contract address on Tempo testnet ────────────────────────────────
 const PATH_USD = "0x20c0000000000000000000000000000000000000" as const
 
+// Debug: log which env vars are present (not their values)
+console.log("🔍 Env vars present:", Object.keys(process.env).filter(k =>
+  ["RECIPIENT_ADDRESS", "APIFY_TOKEN", "SERVER_PRIVATE_KEY", "MPP_SECRET_KEY", "PORT"].includes(k)
+))
+
 const RECIPIENT = process.env.RECIPIENT_ADDRESS
 if (!RECIPIENT) {
   console.error("❌  RECIPIENT_ADDRESS env var is not set — check your .env file")
+  console.error("    All env keys:", Object.keys(process.env).join(", "))
   process.exit(1)
 }
 
