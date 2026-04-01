@@ -1,0 +1,19 @@
+{
+  "name": "tiktok-mpp-api",
+  "version": "1.0.0",
+  "description": "TikTok scraper API powered by Machine Payments Protocol (MPP) + Apify",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "hono": "^4.7.7",
+    "mppx": "latest",
+    "viem": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}
