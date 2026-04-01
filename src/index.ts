@@ -68,6 +68,9 @@ app.get("/openapi.json", (c) =>
     "x-discovery": {
       ownershipProofs: [],
     },
+    servers: [
+      { url: "https://tiktok-mpp-api-production.up.railway.app", description: "Production" },
+    ],
     paths: {
       "/api/tiktok/user": {
         get: {
@@ -79,7 +82,7 @@ app.get("/openapi.json", (c) =>
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of videos to return" },
           ],
           "x-payment-info": {
-            protocols: [{ mpp: {} }],
+            protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.050000", currency: "USD" },
           },
           responses: {
@@ -101,7 +104,7 @@ app.get("/openapi.json", (c) =>
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of posts to return" },
           ],
           "x-payment-info": {
-            protocols: [{ mpp: {} }],
+            protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.100000", currency: "USD" },
           },
           responses: {
@@ -122,7 +125,7 @@ app.get("/openapi.json", (c) =>
             { name: "url", in: "query", required: true, schema: { type: "string", format: "uri" }, description: "Full TikTok video URL" },
           ],
           "x-payment-info": {
-            protocols: [{ mpp: {} }],
+            protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.020000", currency: "USD" },
           },
           responses: {
@@ -144,7 +147,7 @@ app.get("/openapi.json", (c) =>
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of results to return" },
           ],
           "x-payment-info": {
-            protocols: [{ mpp: {} }],
+            protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.050000", currency: "USD" },
           },
           responses: {
