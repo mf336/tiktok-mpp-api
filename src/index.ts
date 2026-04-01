@@ -111,7 +111,6 @@ app.get("/openapi.json", (c) =>
             required: true,
             content: { "application/json": { schema: { type: "object", required: ["tag"], properties: { tag: { type: "string", description: "Hashtag e.g. fyp or #fyp" }, limit: { type: "integer", default: 10, maximum: 50, description: "Number of posts to return" } } } } },
           },
-          ],
           "x-payment-info": {
             protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.100000", currency: "USD" },
