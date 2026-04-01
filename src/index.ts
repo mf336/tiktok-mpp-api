@@ -1,5 +1,6 @@
 import { Hono } from "hono"
 import { Mppx, tempo } from "mppx/hono"
+import { privateKeyToAccount, generatePrivateKey } from "viem/accounts"
 import { scrapeUser, scrapeHashtag, scrapeVideo, scrapeSearch } from "./apify.js"
 
 // ── PathUSD contract address on Tempo testnet ────────────────────────────────
@@ -11,10 +12,32 @@ if (!RECIPIENT) {
   process.exit(1)
 }
 
+// ── Server signing account ───────────────────────────────────────────────────
+// This key is used by mppx to sign/verify on-chain payment operations.
+// It is NOT the same as your recipient wallet — payments still land at RECIPIENT.
+// On first run a key is auto-generated; save SERVER_PRIVATE_KEY to .env for persistence.
+let serverPrivateKey = process.env.SERVER_PRIVATE_KEY as `0x${string}` | undefined
+if (!serverPrivateKey) {
+  serverPrivateKey = generatePrivateKey()
+  console.warn(`⚠️  No SERVER_PRIVATE_KEY set — generated a temporary one for this session.`)
+  console.warn(`   Add this to your .env to keep it persistent:\n   SERVER_PRIVATE_KEY=${serverPrivateKey}\n`)
+}
+const serverAccount = privateKeyToAccount(serverPrivateKey)
+
+// ── MPP secret key (internal session signing) ────────────────────────────────
+let mppSecretKey = process.env.MPP_SECRET_KEY
+if (!mppSecretKey) {
+  mppSecretKey = crypto.randomUUID()
+  console.warn(`⚠️  No MPP_SECRET_KEY set — generated a temporary one for this session.`)
+  console.warn(`   Add this to your .env to keep it persistent:\n   MPP_SECRET_KEY=${mppSecretKey}\n`)
+}
+
 // ── MPP setup ────────────────────────────────────────────────────────────────
 const mppx = Mppx.create({
+  secretKey: mppSecretKey,
   methods: [
     tempo({
+      account: serverAccount,
       currency: PATH_USD,
       recipient: RECIPIENT as `0x${string}`,
       feePayer: true,  // server sponsors gas on testnet
