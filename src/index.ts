@@ -3,7 +3,7 @@ import { Mppx, tempo } from "mppx/hono"
 import { privateKeyToAccount, generatePrivateKey } from "viem/accounts"
 import { scrapeUser, scrapeHashtag, scrapeVideo, scrapeSearch } from "./apify.js"
 
-// ── PathUSD contract address on Tempo testnet ────────────────────────────────
+// ── PathUSD contract address on Tempo mainnet ────────────────────────────────
 const PATH_USD = "0x20c0000000000000000000000000000000000000" as const
 
 // Debug: log which env vars are present (not their values)
@@ -46,8 +46,8 @@ const mppx = Mppx.create({
       account: serverAccount,
       currency: PATH_USD,
       recipient: RECIPIENT as `0x${string}`,
-      feePayer: true,  // server sponsors gas on testnet
-      testnet: true,   // switch to false + mainnet address when going live
+      feePayer: false,  // client pays gas on mainnet
+      testnet: false,   // 🟢 mainnet — real payments
     }),
   ],
 })
@@ -147,6 +147,7 @@ app.get(
 
 // ── Start server ─────────────────────────────────────────────────────────────
 const port = Number(process.env.PORT ?? 3000)
+// Railway injects PORT — make sure networking config matches this value
 
 console.log(`
 🎵  TikTok MPP API
@@ -156,7 +157,7 @@ console.log(`
     ├─ GET /api/tiktok/video   — $0.02
     └─ GET /api/tiktok/search  — $0.05
 
-    Payments: Tempo/PathUSD (testnet)
+    Payments: Tempo/PathUSD (🟢 MAINNET)
     Recipient: ${RECIPIENT}
 `)
 
