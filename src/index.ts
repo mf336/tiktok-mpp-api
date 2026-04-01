@@ -49,6 +49,9 @@ const mppx = Mppx.create({
 // ── Hono app ─────────────────────────────────────────────────────────────────
 const app = new Hono()
 
+// Root — redirect to health
+app.get("/", (c) => c.redirect("/health"))
+
 // Health check — free, no payment required
 app.get("/health", (c) =>
   c.json({
