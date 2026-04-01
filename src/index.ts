@@ -81,6 +81,10 @@ app.get("/openapi.json", (c) =>
             { name: "handle", in: "query", required: true, schema: { type: "string" }, description: "TikTok username e.g. @charlidamelio" },
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of videos to return" },
           ],
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: { type: "object", required: ["handle"], properties: { handle: { type: "string", description: "TikTok username e.g. @charlidamelio" }, limit: { type: "integer", default: 10, maximum: 50, description: "Number of videos to return" } } } } },
+          },
           "x-payment-info": {
             protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.050000", currency: "USD" },
@@ -103,6 +107,11 @@ app.get("/openapi.json", (c) =>
             { name: "tag", in: "query", required: true, schema: { type: "string" }, description: "Hashtag e.g. fyp or #fyp" },
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of posts to return" },
           ],
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: { type: "object", required: ["tag"], properties: { tag: { type: "string", description: "Hashtag e.g. fyp or #fyp" }, limit: { type: "integer", default: 10, maximum: 50, description: "Number of posts to return" } } } } },
+          },
+          ],
           "x-payment-info": {
             protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.100000", currency: "USD" },
@@ -124,6 +133,10 @@ app.get("/openapi.json", (c) =>
           parameters: [
             { name: "url", in: "query", required: true, schema: { type: "string", format: "uri" }, description: "Full TikTok video URL" },
           ],
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: { type: "object", required: ["url"], properties: { url: { type: "string", format: "uri", description: "Full TikTok video URL e.g. https://www.tiktok.com/@user/video/123" } } } } },
+          },
           "x-payment-info": {
             protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.020000", currency: "USD" },
@@ -146,6 +159,10 @@ app.get("/openapi.json", (c) =>
             { name: "q", in: "query", required: true, schema: { type: "string" }, description: "Search query e.g. funny cats" },
             { name: "limit", in: "query", required: false, schema: { type: "integer", default: 10, maximum: 50 }, description: "Number of results to return" },
           ],
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: { type: "object", required: ["q"], properties: { q: { type: "string", description: "Search query e.g. funny cats" }, limit: { type: "integer", default: 10, maximum: 50, description: "Number of results to return" } } } } },
+          },
           "x-payment-info": {
             protocols: [{ mpp: { method: "", intent: "", currency: "" } }],
             price: { mode: "fixed", amount: "0.050000", currency: "USD" },
